@@ -1,8 +1,13 @@
-# client
+# Application diagram
+![Image description](pics/diagram.png)
+
+# Vue App
+![Image description](pics/app.png)
 
 ## Project setup
 ```
 npm install
+change config.js
 ```
 
 ### Compiles and hot-reloads for development
