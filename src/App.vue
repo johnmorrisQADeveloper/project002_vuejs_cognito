@@ -91,12 +91,7 @@ export default {
   async mounted() {
     let data;
     try {
-      const config = {
-        headers: {
-          Authorization: this.jwt
-        }
-      };
-      const post = await axios.get(getAllPost, config);
+      const post = await axios.get(getAllPost);
       data = post.data;
       this.error = false;
     } catch (error) {
