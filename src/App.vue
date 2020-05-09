@@ -90,8 +90,6 @@ export default {
   async mounted() {
     // console.log(await jwt.signInUserSession.accessToken.jwtToken);
     // console.log(signInUserSession);
-    
-
     let data;
     try {
       const post = await axios.get(getAllPost);
