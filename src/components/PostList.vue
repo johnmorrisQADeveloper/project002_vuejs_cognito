@@ -22,7 +22,7 @@
           </div>
           <div class="owner-name">
             <span class="font-weight-bold text-primary mr-1">Owner:</span>
-            <span>JohnMorris</span>
+            <span>{{post.user}}</span>
           </div>
           <div class="list-view card card-text">
             <span class="font-weight-bold text-primary mr-1">SubTasks:</span>

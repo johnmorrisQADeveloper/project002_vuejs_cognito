@@ -4,14 +4,14 @@
     <div v-if="!signedIn">
       <amplify-authenticator>
         <amplify-sign-in header-text="My Custom Sign In Text" slot="sign-in"></amplify-sign-in>
-        <div>
-          My App
-          <amplify-greetings></amplify-greetings>
-        </div>
+        <amplify-greetings></amplify-greetings>
       </amplify-authenticator>
     </div>
-    <div v-if="signedIn">
-      <amplify-sign-out button-text="Custom Text"></amplify-sign-out>
+    <div v-if="signedIn" class="rowr">
+      <div class="row">
+        <h5 class="col">Welcome {{user}}</h5>
+        <amplify-sign-out class="col" button-text="Custom Text"></amplify-sign-out>
+      </div>
     </div>
     <div v-if="signedIn">
       <search-posts-vue
@@ -77,7 +77,8 @@ export default {
       error: false,
       errorDetail: "",
       signedIn: false,
-      jwt: ''
+      jwt: "",
+      user: ""
     };
   },
   beforeMount() {
@@ -88,11 +89,14 @@ export default {
     });
   },
   async mounted() {
-    // console.log(await jwt.signInUserSession.accessToken.jwtToken);
-    // console.log(signInUserSession);
     let data;
     try {
-      const post = await axios.get(getAllPost);
+      const config = {
+        headers: {
+          Authorization: this.jwt
+        }
+      };
+      const post = await axios.get(getAllPost, config);
       data = post.data;
       this.error = false;
     } catch (error) {
@@ -106,9 +110,8 @@ export default {
       try {
         const user = await Auth.currentAuthenticatedUser();
         this.signedIn = true;
-        console.log(user);
-        console.log(user.signInUserSession.accessToken.jwtToken);
-        this.jwt = user.signInUserSession.accessToken.jwtToken
+        this.user = user.username;
+        this.jwt = user.signInUserSession.accessToken.jwtToken;
       } catch (error) {
         this.signedIn = false;
       }
@@ -163,16 +166,15 @@ export default {
         method: "post",
         url: createPost,
         data: {
-          ...apt
+          ...apt,
+          user: this.user
         },
         headers: { "Content-Type": "application/json" }
       });
     }
   },
   computed: {
-    // filter method in js
     searchApts: function() {
-      console.log("om here");
       try {
         return this.posts.filter(item => {
           return (
