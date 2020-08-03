@@ -24,7 +24,16 @@ Amplify.configure({
     userPoolId: config.USER_POOL_ID,
     identityPoolId: config.IDENTITY_POOL_ID,
     userPoolWebClientId: config.APP_CLIENT_ID
-  }
+  },
+  API: {
+		endpoints: [
+			{
+				name: 'testApiCall',
+				endpoint: config.apiGateway.apiGateway,
+				region: config.REGION
+			}
+		]
+	}
 })
 Vue.use(AmplifyPlugin, AmplifyModules)
 

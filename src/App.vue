@@ -50,7 +50,7 @@ export default {
   name: "App",
   async created() {
     await this.findUser();
-    AmplifyEventBus.$on("authState", async info => {
+    AmplifyEventBus.$on("authState", async (info) => {
       console.log(
         `Here is the auth event that was just emitted by an Amplify component: ${info}`
       );
@@ -64,7 +64,7 @@ export default {
   components: {
     PostListVue,
     AddPostVue,
-    SearchPostsVue
+    SearchPostsVue,
   },
   data() {
     return {
@@ -78,11 +78,11 @@ export default {
       errorDetail: "",
       signedIn: false,
       jwt: "",
-      user: ""
+      user: "",
     };
   },
   beforeMount() {
-    AmplifyEventBus.$on("authState", info => {
+    AmplifyEventBus.$on("authState", (info) => {
       console.log(
         `Here is the auth event that was just emitted by an Amplify component: ${info}`
       );
@@ -90,8 +90,18 @@ export default {
   },
   async mounted() {
     let data;
+    const key = Object.keys(localStorage).find((key) =>
+      key.endsWith("idToken")
+    );
     try {
-      const post = await axios.get(getAllPost);
+      const post = await axios({
+        method: "get",
+        url: getAllPost,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage[key],
+        },
+      });
       data = post.data;
       this.error = false;
     } catch (error) {
@@ -125,13 +135,23 @@ export default {
       this.searchTerms = terms;
     },
     async removeItem(post) {
+      const key = Object.keys(localStorage).find((key) =>
+        key.endsWith("idToken")
+      );
+
       await axios.delete(`${deletePost}/${post.id}`, {
         data: { id: post.id },
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage[key],
+        }
       });
       this.posts = without(this.posts, post);
     },
     async editItem(id, field, text) {
+      const key = Object.keys(localStorage).find((key) =>
+        key.endsWith("idToken")
+      );
       if (field === "todolist") {
         let modifiedListItem = text[text.length - 1];
         const obj = find(text, ["value", modifiedListItem.value]);
@@ -141,7 +161,7 @@ export default {
         console.log(field);
       }
       const index = findIndex(this.posts, {
-        id: id
+        id: id,
       });
       this.posts[index][field] = text;
       const obj = find(this.posts, ["id", id]);
@@ -150,28 +170,37 @@ export default {
         method: "put",
         url: `${updatePost}/${id}`,
         data: {
-          ...obj
+          ...obj,
         },
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage[key],
+        },
       });
     },
     async addItem(apt) {
+      const key = Object.keys(localStorage).find((key) =>
+        key.endsWith("idToken")
+      );
       this.posts.push(apt); // add apt to the appointments array
       axios({
         method: "post",
         url: createPost,
         data: {
           ...apt,
-          user: this.user
+          user: this.user,
         },
-        headers: { "Content-Type": "application/json" }
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage[key],
+        },
       });
-    }
+    },
   },
   computed: {
-    searchApts: function() {
+    searchApts: function () {
       try {
-        return this.posts.filter(item => {
+        return this.posts.filter((item) => {
           return (
             item.title.toLowerCase().match(this.searchTerms.toLowerCase()) ||
             item.body.toLowerCase().match(this.searchTerms.toLowerCase())
@@ -181,16 +210,16 @@ export default {
         return "";
       }
     },
-    filteredApts: function() {
+    filteredApts: function () {
       return orderBy(
         this.searchApts,
-        item => {
+        (item) => {
           return item[this.filterKey].toLowerCase();
         },
         this.filterDir
       );
-    }
-  }
+    },
+  },
 };
 </script>
 
