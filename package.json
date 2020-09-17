@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "uploadtos3": "npm run build && aws s3 sync dist/ s3://serverlessbucketjohn1"
+    "uploadtos3": "npm run build && aws s3 sync dist/ s3://serverlessbucketproject1"
   },
   "dependencies": {
     "@aws-amplify/auth": "^3.2.6",
